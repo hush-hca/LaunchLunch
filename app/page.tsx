@@ -1,135 +1,64 @@
+// page.tsx
+// 필요한 React 및 컴포넌트들을 import 합니다.
 'use client';
 
-import {
-  ConnectWallet,
-  Wallet,
-  WalletDropdown,
-  WalletDropdownLink,
-  WalletDropdownDisconnect,
-} from '@coinbase/onchainkit/wallet';
-import {
-  Address,
-  Avatar,
-  Name,
-  Identity,
-  EthBalance,
-} from '@coinbase/onchainkit/identity';
-import ArrowSvg from './svg/ArrowSvg';
-import ImageSvg from './svg/Image';
-import OnchainkitSvg from './svg/OnchainKit';
+import React, { useState } from 'react';
 
-const components = [
-  {
-    name: 'Transaction',
-    url: 'https://onchainkit.xyz/transaction/transaction',
-  },
-  { name: 'Swap', url: 'https://onchainkit.xyz/swap/swap' },
-  { name: 'Checkout', url: 'https://onchainkit.xyz/checkout/checkout' },
-  { name: 'Wallet', url: 'https://onchainkit.xyz/wallet/wallet' },
-  { name: 'Identity', url: 'https://onchainkit.xyz/identity/identity' },
+import Navbar from '../src/components/Navbar';
+import Footer from '../src/components/Footer';
+import Roulette from '../src/components/Roulette';
+import Ranking from '../src/components/Ranking';
+import MyPage from '../src/components/MyPage';
+import AboutModal from '../src/components/AboutModal';
+
+// Mock data (실제로는 데이터베이스에서 가져와야 합니다)
+const mockUserData = {
+  profilePic: "https://placehold.co/100x100",
+  nickname: "Loza Kilomanzero",
+  points: 120,
+  registeredMenus: 3,
+  myLunches: [
+    { id: 1, name: "Boiled Pork", postUrl: "https://farcaster.com/post/123", imageUrl: "https://placehold.co/100x100" },
+    { id: 2, name: "Pizza", postUrl: "https://farcaster.com/post/124", imageUrl: "https://placehold.co/100x100" },
+  ]
+};
+
+const mockRankingData = [
+  { id: 1, name: "Gamguyul", score: 200 },
+  { id: 2, name: "Gamguyul", score: 200 },
+  { id: 3, name: "Gamguyul", score: 200 },
 ];
 
-const templates = [
-  { name: 'NFT', url: 'https://github.com/coinbase/onchain-app-template' },
-  { name: 'Commerce', url: 'https://github.com/coinbase/onchain-commerce-template'},
-  { name: 'Fund', url: 'https://github.com/fakepixels/fund-component' },
-];
 
-export default function App() {
-  return (
-    <div className="flex flex-col min-h-screen font-sans dark:bg-background dark:text-white bg-white text-black">
-      <header className="pt-4 pr-4">
-        <div className="flex justify-end">
-          <div className="wallet-container">
-            <Wallet>
-              <ConnectWallet>
-                <Avatar className="h-6 w-6" />
-                <Name />
-              </ConnectWallet>
-              <WalletDropdown>
-                <Identity className="px-4 pt-3 pb-2" hasCopyAddressOnClick>
-                  <Avatar />
-                  <Name />
-                  <Address />
-                  <EthBalance />
-                </Identity>
-                <WalletDropdownLink
-                  icon="wallet"
-                  href="https://keys.coinbase.com"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Wallet
-                </WalletDropdownLink>
-                <WalletDropdownDisconnect />
-              </WalletDropdown>
-            </Wallet>
-          </div>
-        </div>
-      </header>
+function Home() {
+  const [currentPage, setCurrentPage] = useState('main');
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-      <main className="flex-grow flex items-center justify-center">
-        <div className="max-w-4xl w-full p-4">
-          <div className="w-1/3 mx-auto mb-6">
-            <ImageSvg />
-          </div>
-          <div className="flex justify-center mb-6">
-            <a target="_blank" rel="_template" href="https://onchainkit.xyz">
-              <OnchainkitSvg className="dark:text-white text-black" />
-            </a>
-          </div>
-          <p className="text-center mb-6">
-            Get started by editing
-            <code className="p-1 ml-1 rounded dark:bg-gray-800 bg-gray-200">app/page.tsx</code>.
-          </p>
-          <div className="flex flex-col items-center">
-            <div className="max-w-2xl w-full">
-              <div className="flex flex-col md:flex-row justify-between mt-4">
-                <div className="md:w-1/2 mb-4 md:mb-0 flex flex-col items-center">
-                  <p className="font-semibold mb-2 text-center">
-                    Explore components
-                  </p>
-                  <ul className="list-disc pl-5 space-y-2 inline-block text-left">
-                    {components.map((component, index) => (
-                      <li key={index}>
-                        <a
-                          href={component.url}
-                          className="hover:underline inline-flex items-center dark:text-white text-black"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {component.name}
-                          <ArrowSvg />
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-                <div className="md:w-1/2 flex flex-col items-center">
-                  <p className="font-semibold mb-2 text-center">
-                    Explore templates
-                  </p>
-                  <ul className="list-disc pl-5 space-y-2 inline-block text-left">
-                    {templates.map((template, index) => (
-                      <li key={index}>
-                        <a
-                          href={template.url}
-                          className="hover:underline inline-flex items-center dark:text-white text-black"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {template.name}
-                          <ArrowSvg/>
-                        </a>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </main>
-    </div>
-  );
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'main':
+        return <Roulette />;
+      case 'ranking':
+        return <Ranking rankingData={mockRankingData} />;
+      case 'mypage':
+        return <MyPage userData={mockUserData} />;
+      default:
+        return <Roulette />;
+    }
+  };
+
+  return (
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      <Navbar onAboutClick={() => setIsModalOpen(true)} />
+      <main className="flex-grow p-4 md:p-8 flex justify-center items-center">
+        {renderPage()}
+      </main>
+      <Footer setCurrentPage={setCurrentPage} currentPage={currentPage} />
+      {isModalOpen && <AboutModal onClose={() => setIsModalOpen(false)} />}
+    </div>
+  );
 }
+
+// 이 파일에서는 Home 컴포넌트만 내보냅니다.
+// 기존 App.js에 있던 `export default App;`을 삭제합니다.
+export default Home;
